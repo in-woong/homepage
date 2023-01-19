@@ -1,0 +1,53 @@
+.scroll-section {
+  position: relative;
+  padding-top: 50vh;
+}
+
+#scroll-section-0 h1 {
+  position: relative;
+  top: -10vh;
+  z-index: 5;
+  font-size: 4rem;
+  text-align: center;
+}
+
+#scroll-section-2 .main-message {
+  font-size: 3.5rem;
+}
+
+.sticky-elem {
+  display: none;
+  position: fixed;
+  left: 0;
+  width: 100%;
+}
+
+.sticky-elem-canvas canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+#show-scene-0 #scroll-section-0 .sticky-elem,
+#show-scene-1 #scroll-section-1 .sticky-elem,
+#show-scene-2 #scroll-section-2 .sticky-elem,
+#show-scene-3 #scroll-section-3 .sticky-elem {
+  display: block;
+  will-change: transform, opacity;
+}
+
+.scroll-effect-end .sticky-elem {
+  display: none !important;
+}
+
+#scroll-section-3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-blend-canvas.sticky {
+  position: fixed;
+  top: 0;
+  z-index: 10;
+}
