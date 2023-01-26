@@ -33,10 +33,23 @@ a {
   overflow-x: hidden;
 }
 
+.main-message {
+  top: 35vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  margin: 5px 0;
+  height: 3em;
+  font-size: 2.5rem;
+}
+
 .main-message p {
   font-weight: bold;
   text-align: center;
   line-height: 1.2;
+  color: aliceblue;
+  text-shadow: -1px 0 #485460, 0 1px #485460, 1px 0 #485460, 0 -1px #485460;
 }
 
 .main-message small {
