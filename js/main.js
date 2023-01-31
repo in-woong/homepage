@@ -61,167 +61,72 @@
       scrollHeight: 0,
       objs: {
         container: document.querySelector('#scroll-section-2'),
+        messageA: document.querySelector('#scroll-section-2 .a'),
+        messageB: document.querySelector('#scroll-section-2 .b'),
+        messageC: document.querySelector('#scroll-section-2 .c'),
+        pinB: document.querySelector('#scroll-section-2 .b .pin'),
+        pinC: document.querySelector('#scroll-section-2 .c .pin'),
+        canvas: document.querySelector('#video-canvas-1'),
+        context: document.querySelector('#video-canvas-1').getContext('2d'),
+        videoImages: [],
       },
-      values: {},
+      values: {
+        videoImageCount: 200,
+        imageSequence: [0, 199],
+        canvas_opacity_in: [0, 1, { start: 0, end: 0.1 }],
+        canvas_opacity_out: [1, 0, { start: 0.95, end: 1 }],
+        messageA_translateY_in: [20, 0, { start: 0.15, end: 0.2 }],
+        messageB_translateY_in: [30, 0, { start: 0.5, end: 0.55 }],
+        messageC_translateY_in: [30, 0, { start: 0.72, end: 0.77 }],
+        messageA_opacity_in: [0, 1, { start: 0.15, end: 0.2 }],
+        messageB_opacity_in: [0, 1, { start: 0.5, end: 0.55 }],
+        messageC_opacity_in: [0, 1, { start: 0.72, end: 0.77 }],
+        messageA_translateY_out: [0, -20, { start: 0.3, end: 0.35 }],
+        messageB_translateY_out: [0, -20, { start: 0.58, end: 0.63 }],
+        messageC_translateY_out: [0, -20, { start: 0.85, end: 0.9 }],
+        messageA_opacity_out: [1, 0, { start: 0.3, end: 0.35 }],
+        messageB_opacity_out: [1, 0, { start: 0.58, end: 0.63 }],
+        messageC_opacity_out: [1, 0, { start: 0.85, end: 0.9 }],
+        pinB_scaleY: [0.5, 1, { start: 0.5, end: 0.55 }],
+        pinC_scaleY: [0.5, 1, { start: 0.72, end: 0.77 }],
+        pinB_opacity_in: [0, 1, { start: 0.5, end: 0.55 }],
+        pinC_opacity_in: [0, 1, { start: 0.72, end: 0.77 }],
+        pinB_opacity_out: [1, 0, { start: 0.58, end: 0.63 }],
+        pinC_opacity_out: [1, 0, { start: 0.85, end: 0.9 }],
+      },
     },
     {
-      //3
       type: 'sticky',
       heightNum: 5,
+      scrollHeight: 0,
       objs: {
         container: document.querySelector('#scroll-section-3'),
+        canvasCaption: document.querySelector('.canvas-caption'),
+        canvas: document.querySelector('.image-blend-canvas'),
+        context: document.querySelector('.image-blend-canvas').getContext('2d'),
+        imagesPath: [
+          './images/blend-image-1.jpg',
+          './images/blend-image-2.jpg',
+        ],
+        images: [],
       },
-      values: {},
+      values: {
+        rect1X: [0, 0, { start: 0, end: 0 }],
+        rect2X: [0, 0, { start: 0, end: 0 }],
+        blendHeight: [0, 0, { start: 0, end: 0 }],
+        canvas_scale: [0, 0, { start: 0, end: 0 }],
+        canvasCaption_opacity: [0, 1, { stsart: 0, end: 0 }],
+        canvasCaption_translateY: [20, 0, { start: 0, end: 0 }],
+        rectStartY: 0,
+      },
     },
   ];
-
-  function scrollLoop() {
-    enterNewScene = false;
-    prevScrollHeight = 0;
-    for (let i = 0; i < currentScene; i += 1) {
-      prevScrollHeight += sceneInfo[i].scrollHeight;
-    }
-
-    if (
-      delayedYOffset <
-      prevScrollHeight + sceneInfo[currentScene].scrollHeight
-    ) {
-      document.body.classList.remove('scroll-effect-end');
-    }
-
-    if (
-      delayedYOffset >
-      prevScrollHeight + sceneInfo[currentScene].scrollHeight
-    ) {
-      enterNewScene = true;
-      if (currentScene === sceneInfo.length - 1) {
-        document.body.classList.add('scroll-effect-end');
-      }
-
-      if (currentScene < sceneInfo.length - 1) {
-        currentScene += 1;
-      }
-
-      document.body.setAttribute('id', `show-scene-${currentScene}`);
-    }
-
-    if (delayedYOffset < prevScrollHeight) {
-      enterNewScene = true;
-      if (currentScene === 0) return;
-      currentScene -= 1;
-      document.body.setAttribute('id', `show-scene-${currentScene}`);
-    }
-
-    if (enterNewScene) return;
-    playAnimation();
-  }
-
-  function checkMenu() {
-    if (yOffset > 44) {
-      document.body.classList.add('local-nav-sticky');
-    } else {
-      document.body.classList.remove('local-nav-sticky');
-    }
-  }
-
-  function calcValues(values, currentYOffset) {
-    let rv;
-    const scrollHeight = sceneInfo[currentScene].scrollHeight;
-    const scrollRatio = currentYOffset / scrollHeight;
-
-    if (values.length === 3) {
-      const partScrollStart = values[2].start * scrollHeight;
-      const partScrollEnd = values[2].end * scrollHeight;
-      const partScrollHeight = partScrollEnd - partScrollStart;
-      if (
-        currentYOffset >= partScrollStart &&
-        currentYOffset <= partScrollEnd
-      ) {
-        rv =
-          ((currentYOffset - partScrollStart) / partScrollHeight) *
-            (values[1] - values[0]) +
-          values[0];
-      } else if (currentYOffset < partScrollStart) {
-        rv = values[0];
-      } else if (currentYOffset > partScrollEnd) {
-        rv = values[1];
-      }
-    } else {
-      rv = scrollRatio * (values[1] - values[0]) + values[0];
-    }
-
-    return rv;
-  }
-
-  function loop() {
-    delayedYOffset = delayedYOffset + (yOffset - delayedYOffset) * acc;
-
-    if (!enterNewScene) {
-      if (currentScene === 0) {
-        const currentYOffset = delayedYOffset - prevScrollHeight;
-        const { objs, values } = sceneInfo[currentScene];
-
-        let sequence = Math.round(
-          calcValues(values.imageSequence, currentYOffset)
-        );
-        if (objs.videoImages[sequence]) {
-          objs.context.drawImage(objs.videoImages[sequence], 0, 0);
-        }
-      }
-    }
-
-    rafId = requestAnimationFrame(loop);
-
-    if (Math.abs(yOffset - delayedYOffset) < 1) {
-      cancelAnimationFrame(rafId);
-      rafState = false;
-    }
-  }
-
-  function setLayout() {
-    for (let i = 0; i < sceneInfo.length; i += 1) {
-      if (sceneInfo[i].type === 'sticky') {
-        sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight;
-      } else if (sceneInfo[i].type === 'normal') {
-        sceneInfo[i].scrollHeight = sceneInfo[i].objs.container.offsetHeight;
-      }
-      sceneInfo[
-        i
-      ].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`;
-    }
-
-    let totalScrollHeight = 0;
-    yOffset = window.pageYOffset;
-    for (let i = 0; i < sceneInfo.length; i += 1) {
-      totalScrollHeight += sceneInfo[i].scrollHeight;
-      if (totalScrollHeight >= yOffset) {
-        currentScene = i;
-        break;
-      }
-    }
-    document.body.setAttribute('id', `show-scene-${currentScene}`);
-
-    const heightRatio = window.innerHeight / 1080;
-    sceneInfo[0].objs.canvas.style.transform = `translate3d(-50%,-50%,0) scale(${heightRatio})`;
-    // sceneInfo[2].objs.canvas.style.transform = `translate3d(-50%,-50%,0) scale(${heightRatio})`;
-  }
-
-  function setCanvasImages() {
-    //비디오와 이미지 사전준비
-
-    let imgElem;
-    for (let i = 0; i < sceneInfo[0].values.videoImageCount; i += 1) {
-      imgElem = new Image();
-      imgElem.src = `./video/file/IMG_${9001 + i}.jpg`;
-      sceneInfo[0].objs.videoImages.push(imgElem);
-    }
-  }
 
   function playAnimation() {
     const { objs, values, scrollHeight } = sceneInfo[currentScene];
     const currentYOffset = yOffset - prevScrollHeight;
     const scrollRatio = currentYOffset / scrollHeight;
-
+    console.log('sceneNum', currentScene);
     switch (currentScene) {
       case 0:
         objs.canvas.style.opacity = calcValues(
@@ -319,6 +224,7 @@
         let sequence2 = Math.round(
           calcValues(values.imageSequence, currentYOffset)
         );
+
         objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
 
         if (scrollRatio <= 0.5) {
@@ -539,11 +445,167 @@
       //step 3 전체크리가 커진 이후
     }
   }
+  function setCanvasImages() {
+    //비디오와 이미지 사전준비
+
+    let imgElem;
+    for (let i = 0; i < sceneInfo[0].values.videoImageCount; i += 1) {
+      imgElem = new Image();
+      imgElem.src = `./video/file/IMG_${9001 + i}.jpg`;
+      sceneInfo[0].objs.videoImages.push(imgElem);
+    }
+
+    let imgElem2;
+    for (let i = 0; i < sceneInfo[2].values.videoImageCount; i += 1) {
+      imgElem2 = new Image();
+      imgElem2.src = `./video/file2/IMG_0515_out${
+        i < 9 ? '000' + (1 + i) : i < 99 ? '00' + (1 + i) : '0' + (1 + i)
+      }.jpg`;
+      sceneInfo[2].objs.videoImages.push(imgElem2);
+    }
+
+    let imgElem3;
+    for (let i = 0; i < sceneInfo[3].objs.imagesPath.length; i += 1) {
+      imgElem3 = new Image();
+      imgElem3.src = sceneInfo[3].objs.imagesPath[i];
+      sceneInfo[3].objs.images.push(imgElem3);
+    }
+  }
+
+  function scrollLoop() {
+    enterNewScene = false;
+    prevScrollHeight = 0;
+    for (let i = 0; i < currentScene; i += 1) {
+      prevScrollHeight += sceneInfo[i].scrollHeight;
+    }
+
+    if (
+      delayedYOffset <
+      prevScrollHeight + sceneInfo[currentScene].scrollHeight
+    ) {
+      document.body.classList.remove('scroll-effect-end');
+    }
+
+    if (
+      delayedYOffset >
+      prevScrollHeight + sceneInfo[currentScene].scrollHeight
+    ) {
+      enterNewScene = true;
+      if (currentScene === sceneInfo.length - 1) {
+        document.body.classList.add('scroll-effect-end');
+      }
+
+      if (currentScene < sceneInfo.length - 1) {
+        currentScene += 1;
+      }
+
+      document.body.setAttribute('id', `show-scene-${currentScene}`);
+    }
+
+    if (delayedYOffset < prevScrollHeight) {
+      enterNewScene = true;
+      if (currentScene === 0) return;
+      currentScene -= 1;
+      document.body.setAttribute('id', `show-scene-${currentScene}`);
+    }
+
+    if (enterNewScene) return;
+    playAnimation();
+  }
+
+  function checkMenu() {
+    if (yOffset > 44) {
+      document.body.classList.add('local-nav-sticky');
+    } else {
+      document.body.classList.remove('local-nav-sticky');
+    }
+  }
+
+  function calcValues(values, currentYOffset) {
+    let rv;
+    const scrollHeight = sceneInfo[currentScene].scrollHeight;
+    const scrollRatio = currentYOffset / scrollHeight;
+
+    if (values.length === 3) {
+      const partScrollStart = values[2].start * scrollHeight;
+      const partScrollEnd = values[2].end * scrollHeight;
+      const partScrollHeight = partScrollEnd - partScrollStart;
+      if (
+        currentYOffset >= partScrollStart &&
+        currentYOffset <= partScrollEnd
+      ) {
+        rv =
+          ((currentYOffset - partScrollStart) / partScrollHeight) *
+            (values[1] - values[0]) +
+          values[0];
+      } else if (currentYOffset < partScrollStart) {
+        rv = values[0];
+      } else if (currentYOffset > partScrollEnd) {
+        rv = values[1];
+      }
+    } else {
+      rv = scrollRatio * (values[1] - values[0]) + values[0];
+    }
+
+    return rv;
+  }
+
+  function loop() {
+    delayedYOffset = delayedYOffset + (yOffset - delayedYOffset) * acc;
+
+    if (!enterNewScene) {
+      if (currentScene === 0) {
+        const currentYOffset = delayedYOffset - prevScrollHeight;
+        const { objs, values } = sceneInfo[currentScene];
+
+        let sequence = Math.round(
+          calcValues(values.imageSequence, currentYOffset)
+        );
+        if (objs.videoImages[sequence]) {
+          objs.context.drawImage(objs.videoImages[sequence], 0, 0);
+        }
+      }
+    }
+
+    rafId = requestAnimationFrame(loop);
+
+    if (Math.abs(yOffset - delayedYOffset) < 1) {
+      cancelAnimationFrame(rafId);
+      rafState = false;
+    }
+  }
+
+  function setLayout() {
+    for (let i = 0; i < sceneInfo.length; i += 1) {
+      if (sceneInfo[i].type === 'sticky') {
+        sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight;
+      } else if (sceneInfo[i].type === 'normal') {
+        sceneInfo[i].scrollHeight = sceneInfo[i].objs.container.offsetHeight;
+      }
+      sceneInfo[
+        i
+      ].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`;
+    }
+
+    let totalScrollHeight = 0;
+    yOffset = window.pageYOffset;
+    for (let i = 0; i < sceneInfo.length; i += 1) {
+      totalScrollHeight += sceneInfo[i].scrollHeight;
+      if (totalScrollHeight >= yOffset) {
+        currentScene = i;
+        break;
+      }
+    }
+    document.body.setAttribute('id', `show-scene-${currentScene}`);
+
+    const heightRatio = window.innerHeight / 1080;
+    sceneInfo[0].objs.canvas.style.transform = `translate3d(-50%,-50%,0) scale(${heightRatio})`;
+    sceneInfo[2].objs.canvas.style.transform = `translate3d(-50%,-50%,0) scale(${heightRatio})`;
+  }
 
   window.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('before-load');
     setLayout();
-    console.log(sceneInfo[0].objs.videoImages);
     sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
 
     let tempYOffset = yOffset;
@@ -560,7 +622,6 @@
 
     window.addEventListener('scroll', () => {
       yOffset = window.pageYOffset;
-      console.log(yOffset);
       scrollLoop();
       checkMenu();
 

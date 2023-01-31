@@ -21,6 +21,24 @@
   left: 0;
   width: 100%;
 }
+.sticky-elem.desc-message {
+  width: 45%;
+  font-weight: bold;
+  opacity: 0;
+}
+.pin {
+  width: 1px;
+  height: 100px;
+  background: rgb(29, 29, 31);
+}
+#scroll-section-2 .b {
+  top: 10%;
+  left: 40%;
+}
+#scroll-section-2 .c {
+  top: 15%;
+  left: 45%;
+}
 
 .sticky-elem-canvas canvas {
   position: absolute;
